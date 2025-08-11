@@ -105,6 +105,25 @@ public class JugadorMenu
                         }
                         break;
                     case "4":
+                        Console.Clear();
+                        Console.WriteLine("== Eliminar Jugador ==");
+                        int eliminarId = LeerEntero("Ingrese el Id del jugador que desea eliminar: ");
+                        while (true)
+                        {
+                            Console.WriteLine("¿Está seguro de eliminarlo? (si/no)");
+                            string? eliminar = Console.ReadLine();
+                            if (eliminar?.ToLower() != "si")
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                await service.EliminarJugadorAsync(eliminarId);
+                                Console.WriteLine("🗑️ Jugador eliminado exitosamente.");
+                                Console.ReadKey();
+                                break;
+                            }
+                        }
                         Console.ReadKey();
                         break;
                     case "5":

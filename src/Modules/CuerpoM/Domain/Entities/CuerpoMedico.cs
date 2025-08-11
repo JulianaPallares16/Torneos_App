@@ -11,6 +11,7 @@ namespace Torneos_App.src.Modules.CuerpoM.Domain.Entities
         public int Id { get; set; }
         public string? Nombre { get; set; } = string.Empty;
         public string? Apellido { get; set; } = string.Empty;
+        public int Edad { get; set; }
         public string? Especialidad { get; set; } = string.Empty; 
         public int EquipoId { get; set; }
         public Equipo? Equipo { get; set; }

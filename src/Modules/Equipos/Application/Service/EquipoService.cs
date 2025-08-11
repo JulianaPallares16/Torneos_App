@@ -83,10 +83,6 @@ namespace Torneos_App.src.Modules.Equipos.Application.Service
                 equipo.Torneos.Remove(torneoAEliminar);
                 await _repo.SaveAsync();
             }
-            else
-            {
-                throw new Exception("El equipo no está inscrito en ese torneo.");
-            }
         }
     }
 }

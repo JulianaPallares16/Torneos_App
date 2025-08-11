@@ -19,6 +19,7 @@ namespace Torneos_App.src.Modules.Equipos.Infrastructure.Repositories
         public async Task<Equipo?> GetByIdAsync(int id)
         {
             return await _context.Equipos
+                .Include(e => e.Torneos)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
         public async Task<IEnumerable<Equipo>> GetAllAsync()
