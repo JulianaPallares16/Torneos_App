@@ -15,10 +15,6 @@ namespace Torneos_App.src.Modules.Equipos.Domain.Entities
         public string? Nombre { get; set; } = string.Empty;
         public string? Tipo { get; set; } = string.Empty;
         public string? Pais { get; set; } = string.Empty;
-
-        public int TorneoId { get; set; }
-        public Torneo? Torneo { get; set; }
-
         public ICollection<Jugador>? Jugadores { get; set; } = new HashSet<Jugador>();
         public ICollection<CuerpoTecnico>? CuerposTecnicos { get; set; } = new HashSet<CuerpoTecnico>();
          public ICollection<CuerpoMedico>? CuerposMedicos { get; set; } = new HashSet<CuerpoMedico>();

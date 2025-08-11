@@ -9,7 +9,7 @@ namespace Torneos_App.src.Modules.Jugadores.Application.Services
 {
     public class JugadorService : IJugadorService
     {
-        private readonly IJugadorRepository _repo;
+    private readonly IJugadorRepository _repo;
     public JugadorService(IJugadorRepository repo)
     {
         _repo = repo;
@@ -18,22 +18,22 @@ namespace Torneos_App.src.Modules.Jugadores.Application.Services
     {
         return _repo.GetAllAsync()!;
     }
-        public async Task RegistrarJugadorAsync(string nombre, string apellido, int edad, int dorsal, string posicion)
-        {
-            var existentes = await _repo.GetAllAsync();
-            if (existentes.Any(j => j.Nombre == nombre && j.Apellido == apellido))
-                throw new Exception("El jugador ya existe.");
+    public async Task RegistrarJugadorAsync(string nombre, string apellido, int edad, int dorsal, string posicion)
+    {
+        var existentes = await _repo.GetAllAsync();
+        if (existentes.Any(j => j.Nombre == nombre && j.Apellido == apellido))
+            throw new Exception("El jugador ya existe.");
 
-            var jugador = new Jugador
-            {
-                Nombre = nombre,
-                Apellido = apellido,
-                Edad = edad,
-                Dorsal = dorsal,
-                Posicion = posicion,
-            };
-            _repo.Add(jugador);
-            await _repo.SaveAsync();
+        var jugador = new Jugador
+        {
+            Nombre = nombre,
+            Apellido = apellido,
+            Edad = edad,
+            Dorsal = dorsal,
+            Posicion = posicion,
+        };
+        _repo.Add(jugador);
+        await _repo.SaveAsync();
     }
     public async Task EditarJugadorAsync(int id, string nuevoNombre, string nuevoApellido, int nuevaEdad, int nuevoDorsal, string nuevaPosicion)
     {
