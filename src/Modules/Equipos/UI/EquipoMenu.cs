@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Torneos_App.src.Modules.Equipos.Application.Service;
 using Torneos_App.src.Modules.Equipos.Domain.Entities;
 using Torneos_App.src.Modules.Equipos.Infrastructure.Repositories;
+using Torneos_App.src.Modules.Torneos.Application.Services;
+using Torneos_App.src.Modules.Torneos.Infrastructure.Repositories;
 using Torneos_App.src.Shared.Context;
 
 namespace Torneos_App.src.Modules.Equipos.UI;
@@ -13,12 +15,14 @@ public class EquipoMenu
 {
     private readonly AppDbContext _context;
     readonly EquipoRepository repo = null!;
+    readonly TorneoRepository torneorepo = null!;
     readonly EquipoService service = null!;
     public EquipoMenu(AppDbContext context)
     {
         _context = context;
         repo = new EquipoRepository(context);
-        service = new EquipoService(repo);
+        torneorepo = new TorneoRepository(context);
+        service = new EquipoService(repo, torneorepo);
     }
     public async Task RenderMenu()
     {
@@ -66,6 +70,40 @@ public class EquipoMenu
                     case "4":
                         Console.Clear();
                         Console.WriteLine("=== Inscribir Equipo a Torneo ===");
+                        var equipos = await service.ConsultarEquiposAsync();
+                        Console.WriteLine("Equipos disponibles:");
+                        foreach (var eq in equipos)
+                        {
+                            Console.WriteLine($"Id: {eq.Id} - Nombre: {eq.Nombre}");
+                        }
+                        Console.Write("Ingrese el Id del equipo a inscribir: ");
+                        if (!int.TryParse(Console.ReadLine(), out int equipoId))
+                        {
+                            Console.WriteLine("Id inválido.");
+                            Console.ReadKey();
+                            break;
+                        }
+                        var torneoService = new TorneoService(new TorneoRepository(_context));
+                        var torneos = await torneoService.ConsultaTorneoAsync();
+                        Console.WriteLine("Torneos disponibles:");
+                        foreach (var tor in torneos)
+                        {
+                            Console.WriteLine($"Id: {tor.Id} - Nombre: {tor.Nombre}");
+                        }
+                        Console.Write("Ingrese el Id del torneo al cual inscribir al equipo: ");
+                        if (!int.TryParse(Console.ReadLine(), out int torneoId))
+                        {
+                            Console.WriteLine("Id inválido.");
+                            Console.ReadKey();
+                            break;
+                        }
+                        await service.InscribirATorneoAsync(equipoId, torneoId);
+                        Console.WriteLine("✅ Equipo inscrito al torneo con éxito.");
+                        break;
+                    case "7":
+                        Console.Clear();
+                        Console.WriteLine("Adios...");
+                        regresar = true;
                         break;
 
                 }

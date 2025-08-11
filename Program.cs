@@ -1,6 +1,7 @@
 ﻿using Torneos_App.src.Shared.Helpers;
 using Torneos_App.src.Modules.Torneos.UI;
 using Torneos_App.src.Modules.Jugadores.UI;
+using Torneos_App.src.Modules.Equipos.UI;
 
 var context = DbContextFactory.Create();
 
@@ -33,6 +34,7 @@ while (!salir)
                 await new TorneoMenu(context).RenderMenu();
                 break;
             case "2":
+                await new EquipoMenu(context).RenderMenu();
                 break;
             case "3":
                 await new JugadorMenu(context).RenderMenu();

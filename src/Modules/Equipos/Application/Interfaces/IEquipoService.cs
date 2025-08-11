@@ -12,6 +12,6 @@ namespace Torneos_App.src.Modules.Equipos.Application.Interfaces
         Task<IEnumerable<Equipo>> ConsultarEquiposAsync();
         Task<Equipo?> ObtenerEquipoPorIdAsync(int id);
         Task InscribirATorneoAsync(int equipoId, int torneoId);
-        Task SalirDeTorneoAsync(int equipoId);
+        Task SalirDeTorneoAsync(int equipoId, int torneoId);
     }
 }

@@ -139,3 +139,4 @@ C:\Users\julia\Torneos_App\obj\Debug\net9.0\refint\Torneos_App.dll
 C:\Users\julia\Torneos_App\obj\Debug\net9.0\Torneos_App.pdb
 C:\Users\julia\Torneos_App\obj\Debug\net9.0\Torneos_App.genruntimeconfig.cache
 C:\Users\julia\Torneos_App\obj\Debug\net9.0\ref\Torneos_App.dll
+C:\Users\julia\Torneos_App\obj\Debug\net9.0\Torneos_App.sourcelink.json
