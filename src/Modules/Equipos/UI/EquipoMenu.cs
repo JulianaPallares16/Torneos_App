@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Torneos_App.src.Modules.CuerpoM.Application.Services;
 using Torneos_App.src.Modules.CuerpoM.Infrastructure.Repositories;
+using Torneos_App.src.Modules.CuerpoT.Application.Services;
+using Torneos_App.src.Modules.CuerpoT.Infrastructure.Repositories;
 using Torneos_App.src.Modules.Equipos.Application.Service;
 using Torneos_App.src.Modules.Equipos.Domain.Entities;
 using Torneos_App.src.Modules.Equipos.Infrastructure.Repositories;
@@ -19,18 +21,22 @@ public class EquipoMenu
     readonly EquipoRepository repo = null!;
     readonly TorneoRepository torneorepo = null!;
     readonly CuerpoMedicoRepository cuerpoMrepo = null!;
+    readonly CuerpoTRepository cuerpoTrepo = null!;
     readonly EquipoService service = null!;
     private readonly TorneoService torneoService;
     private readonly CuerpoMedicoService cuerpoMService;
+    private readonly CuerpoTecnicoService cuerpoTService;
     public EquipoMenu(AppDbContext context)
     {
         _context = context;
         repo = new EquipoRepository(context);
         torneorepo = new TorneoRepository(context);
         cuerpoMrepo = new CuerpoMedicoRepository(context);
+        cuerpoTrepo = new CuerpoTRepository(context);
         service = new EquipoService(repo, torneorepo);
         torneoService = new TorneoService(torneorepo);
         cuerpoMService = new CuerpoMedicoService(cuerpoMrepo);
+        cuerpoTService = new CuerpoTecnicoService(cuerpoTrepo);
     }
     public async Task RenderMenu()
     {
@@ -72,6 +78,29 @@ public class EquipoMenu
                         Console.ReadKey();
                         break;
                     case "2":
+                        Console.Clear();
+                        Console.WriteLine("== Registrar Cuerpo Técnico ==");
+                        var equiposCT = await service.ConsultarEquiposAsync();
+                        Console.WriteLine("Equipos disponibles:");
+                        foreach (var e in equiposCT)
+                            Console.WriteLine($"Id: {e.Id} - Nombre: {e.Nombre}");
+                        Console.WriteLine("Ingrese el Id del equipo: ");
+                        if (!int.TryParse(Console.ReadLine(), out int equipoIdCT))
+                        {
+                            Console.WriteLine("Id inválido.");
+                            Console.ReadKey();
+                            break;
+                        }
+                        Console.WriteLine("Ingrese el nombre: ");
+                        string? nombreCT = Console.ReadLine();
+                        Console.WriteLine("Ingrese el apellido: ");
+                        string? apellidoCT = Console.ReadLine();
+                        int edadCT = LeerEntero("Ingrese la edad:");
+                        Console.WriteLine("Ingrese la especialidad: ");
+                        string? cargo = Console.ReadLine();
+                        await cuerpoTService.RegistrarTecnicoAsync(nombreCT!, apellidoCT!, edadCT, cargo!, equipoIdCT);
+                        Console.WriteLine("✅ Cuerpo técnico registrado con éxito.");
+                        Console.ReadKey();
                         break;
                     case "3":
                         Console.Clear();
@@ -92,7 +121,7 @@ public class EquipoMenu
                         Console.WriteLine("Ingrese el apellido: ");
                         string? apellidoCM = Console.ReadLine();
                         int edadCM = LeerEntero("Ingrese la edad:");
-                        Console.WriteLine("Ingrese la especialidad: ");
+                        Console.WriteLine("Ingrese el cargo: ");
                         string? especialidad = Console.ReadLine();
                         await cuerpoMService.RegistrarMedicoAsync(nombreCM!, apellidoCM!, edadCM, especialidad!, equipoIdCM);
                         Console.WriteLine("✅ Cuerpo médico registrado con éxito.");
