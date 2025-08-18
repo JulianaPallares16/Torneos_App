@@ -46,8 +46,8 @@ namespace Torneos_App.src.Shared.Configuration
                      .WithMany(t => t.Equipos)
                      .UsingEntity<Dictionary<string, object>>(
                      "torneo_equipo", 
-                     r => r.HasOne<Torneo>().WithMany().HasForeignKey("TorneoId").OnDelete(DeleteBehavior.Cascade),
-                     l => l.HasOne<Equipo>().WithMany().HasForeignKey("EquipoId").OnDelete(DeleteBehavior.Cascade),
+                     r => r.HasOne<Torneo>().WithMany().HasForeignKey("TorneoId").OnDelete(DeleteBehavior.NoAction),
+                     l => l.HasOne<Equipo>().WithMany().HasForeignKey("EquipoId").OnDelete(DeleteBehavior.NoAction),
                      je =>
                      {
                             je.HasKey("TorneoId", "EquipoId");

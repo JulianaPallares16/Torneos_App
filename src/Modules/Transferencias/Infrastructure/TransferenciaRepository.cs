@@ -3,28 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Torneos_App.src.Modules.Equipos.Domain.Entities;
+using Torneos_App.src.Modules.Jugadores.Domain.Entities;
 using Torneos_App.src.Modules.Transferencias.Application.Interfaces;
-using Torneos_App.src.Modules.Transferencias.Domain.Entities;
+using Torneos_App.src.Shared.Context;
 
 namespace Torneos_App.src.Modules.Transferencias.Infrastructure
 {
     public class TransferenciaRepository : ITransferenciaRepository
     {
-        private readonly DbContext _context;
+        private readonly AppDbContext _context;
 
-        public TransferenciaRepository(DbContext context)
+        public TransferenciaRepository(AppDbContext context)
         {
             _context = context;
         }
 
-        public void Add(Transferencia transferencia)
+        public Jugador? GetJugadorById(int jugadorId)
         {
-            _context.Set<Transferencia>().Add(transferencia);
+            return _context.Jugadores.Find(jugadorId);
         }
 
-        public async Task SaveAsync()
+        public Equipo? GetEquipoById(int equipoId)
         {
-            await _context.SaveChangesAsync();
+            return _context.Equipos.Find(equipoId);
+        }
+
+        public List<Equipo> GetEquipos()
+        {
+            return _context.Equipos.ToList();
+        }
+
+        public List<Jugador> GetJugadores()
+        {
+            return _context.Jugadores.ToList();
+        }
+
+        public void SaveChanges()
+        {
+            _context.SaveChanges();
         }
     }
 }

@@ -1,0 +1,52 @@
+# GESTOR DE TORNEOS
+Juliana Pallares
+
+# Base De Datos
+```sql
+CREATE DaTABASE GestorTorneos
+
+USE GestorTorneos
+
+CREATE TABLE IF NOT EXISTS torneos (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Tipo VARCHAR(50) NOT NULL,
+    FechaInicio DATE NOT NULL,
+    FechaFin DATE NOT NULL
+) ENGINE = INNODB;
+
+CREATE TABLE IF NOT EXISTS equipos (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Tipo VARCHAR(50),
+    Pais VARCHAR(50) 
+) ENGINE = INNODB;
+
+CREATE TABLE IF NOT EXISTS torneo_equipo (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    TorneoId INT NOT NULL,
+    EquipoId INT NOT NULL,
+    FOREIGN KEY (TorneoId) REFERENCES torneos(Id),
+    FOREIGN KEY (EquipoId) REFERENCES equipos(Id)
+) ENGINE = INNODB;
+
+CREATE TABLE IF NOT EXISTS cuerposmedicos (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Apellido VARCHAR(100) NOT NULL,
+    Edad INT NOT NULL,
+    Especialidad VARCHAR(100) NOT NULL,
+    EquipoId INT NOT NULL,
+    FOREIGN KEY (EquipoId) REFERENCES Equipos(Id)
+) ENGINE = INNODB;
+
+CREATE TABLE IF NOT EXISTS cuerpostecnicos (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Apellido VARCHAR(100) NOT NULL,
+    Edad INT NOT NULL,
+    Cargo VARCHAR(100) NOT NULL,
+    EquipoId INT NOT NULL,
+    FOREIGN KEY (EquipoId) REFERENCES Equipos(Id)
+) ENGINE = INNODB;
+```
