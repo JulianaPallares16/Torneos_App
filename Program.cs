@@ -2,6 +2,9 @@
 using Torneos_App.src.Modules.Torneos.UI;
 using Torneos_App.src.Modules.Jugadores.UI;
 using Torneos_App.src.Modules.Equipos.UI;
+using System;
+using System.Drawing.Printing;
+using System.Drawing;
 
 var context = DbContextFactory.Create();
 
