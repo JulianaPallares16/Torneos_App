@@ -49,4 +49,15 @@ CREATE TABLE IF NOT EXISTS cuerpostecnicos (
     EquipoId INT NOT NULL,
     FOREIGN KEY (EquipoId) REFERENCES Equipos(Id)
 ) ENGINE = INNODB;
+
+CREATE TABLE IF NOT EXISTS jugadores (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Apellido VARCHAR(100) NOT NULL,
+    Edad INT NOT NULL,
+    Dorsal INT NOT NULL,
+    Posicion VARCHAR(50),
+    EquipoId INT NULL,
+    FOREIGN KEY (EquipoId) REFERENCES Equipos(Id)
+) ENGINE = INNODB;
 ```
