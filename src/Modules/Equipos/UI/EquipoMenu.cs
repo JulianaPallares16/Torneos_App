@@ -11,6 +11,8 @@ using Torneos_App.src.Modules.Equipos.Domain.Entities;
 using Torneos_App.src.Modules.Equipos.Infrastructure.Repositories;
 using Torneos_App.src.Modules.Torneos.Application.Services;
 using Torneos_App.src.Modules.Torneos.Infrastructure.Repositories;
+using Torneos_App.src.Modules.Transferencias.Application.Services;
+using Torneos_App.src.Modules.Transferencias.Infrastructure;
 using Torneos_App.src.Shared.Context;
 
 namespace Torneos_App.src.Modules.Equipos.UI;
@@ -22,10 +24,13 @@ public class EquipoMenu
     readonly TorneoRepository torneorepo = null!;
     readonly CuerpoMedicoRepository cuerpoMrepo = null!;
     readonly CuerpoTRepository cuerpoTrepo = null!;
+    readonly TransferenciaRepository transferenciarepo = null!;
     readonly EquipoService service = null!;
     private readonly TorneoService torneoService;
     private readonly CuerpoMedicoService cuerpoMService;
     private readonly CuerpoTecnicoService cuerpoTService;
+    private readonly TransferenciaService transferenciaService;
+
     public EquipoMenu(AppDbContext context)
     {
         _context = context;
@@ -159,6 +164,34 @@ public class EquipoMenu
                         await service.InscribirATorneoAsync(equipoId, torneoId);
                         Console.WriteLine("✅ Equipo inscrito al torneo con éxito.");
                         Console.ReadKey();
+                        break;
+                    case"5":
+                        Console.Clear();
+                        Console.WriteLine("=== Notificaciones ===");
+                        var equiposn = await service.ConsultarEquiposAsync();
+                        Console.WriteLine("Equipos disponibles:");
+                        foreach (var e in equiposn)
+                            Console.WriteLine($"Id: {e.Id} - Nombre: {e.Nombre}");
+                        Console.WriteLine("Ingrese el Id del equipo para ver sus notificaciones: ");
+                        if (!int.TryParse(Console.ReadLine(), out int equipoIdN))
+                        {
+                            Console.WriteLine("Id inválido.");
+                            Console.ReadKey();
+                            break;
+                        }
+                        var notificaciones = transferenciaService.ObtenerNotificaciones(equipoIdN);
+                        if (notificaciones.Any())
+                        {
+                            Console.WriteLine("📢 Notificaciones:");
+                            foreach (var n in notificaciones)
+                            {
+                                Console.WriteLine($"[{n.Fecha}] {n.Tipo} - {n.Mensaje} | Estado: {n.Estado}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("No hay notificaciones.");
+                        }
                         break;
                     case "6":
                         Console.Clear();

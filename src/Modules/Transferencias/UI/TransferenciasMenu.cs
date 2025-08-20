@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Torneos_App.src.Modules.Equipos.Application.Service;
+using Torneos_App.src.Modules.Equipos.Domain.Entities;
 using Torneos_App.src.Modules.Equipos.Infrastructure.Repositories;
+using Torneos_App.src.Modules.Jugadores.Domain.Entities;
 using Torneos_App.src.Modules.Transferencias.Application.Interfaces;
 using Torneos_App.src.Modules.Transferencias.Application.Services;
 using Torneos_App.src.Modules.Transferencias.Infrastructure;
@@ -12,7 +14,7 @@ using Torneos_App.src.Shared.Context;
 namespace Torneos_App.src.Modules.Transferencias.UI;
 
 public class TransferenciasMenu
-{   
+{
     private readonly AppDbContext _context;
     readonly TransferenciaRepository repo = null!;
     readonly TransferenciaService service = null!;
@@ -91,7 +93,9 @@ public class TransferenciasMenu
                         }
                         else
                         {
-                            Console.WriteLine($"{jugadorSeleccionado.Nombre} no está libre. (Más adelante: proceso de negociación)");
+                            Console.WriteLine($"{jugadorSeleccionado.Nombre} no está libre.");
+                            Negociacion(jugadorSeleccionado, equipoComprador);
+
                         }
                         Console.ReadKey();
                         break;
@@ -105,6 +109,47 @@ public class TransferenciasMenu
                         Console.WriteLine("Opción no valida");
                         break;
                 }
+            }
+        }
+    }
+    private void Negociacion(Jugador jugadorSeleccionado, Equipo equipoComprador)
+    {
+        Console.WriteLine("¿Qué desea hacer?");
+        Console.WriteLine("1. Solicitar compra");
+        Console.WriteLine("2. Solicitar préstamo");
+        Console.WriteLine("3. Cancelar");
+        string? opn = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(opn))
+        {
+            return;
+        }
+        else
+        {
+            switch (opn)
+            {
+                case "1":
+                    service.EnviarNotificacion(
+                        jugadorSeleccionado.EquipoId.Value,
+                        $"{equipoComprador.Nombre} ha solicitado la COMPRA de {jugadorSeleccionado.Nombre}."
+                    );
+                    Console.WriteLine("✅ Solicitud de compra enviada al equipo dueño.");
+                    break;
+
+                case "2":
+                    service.EnviarNotificacion(
+                        jugadorSeleccionado.EquipoId.Value,
+                        $"{equipoComprador.Nombre} ha solicitado el PRESTAMO de {jugadorSeleccionado.Nombre}."
+                    );
+                    Console.WriteLine("✅ Solicitud de préstamo enviada al equipo dueño.");
+                    break;
+
+                case "3":
+                    Console.WriteLine("Operación cancelada.");
+                    break;
+
+                default:
+                    Console.WriteLine("Opción inválida.");
+                    break;
             }
         }
     }

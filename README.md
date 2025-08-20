@@ -3,9 +3,9 @@ Juliana Pallares
 
 # Base De Datos
 ```sql
-CREATE DaTABASE GestorTorneos
+CREATE DaTABASE gestortorneos
 
-USE GestorTorneos
+USE gestortorneos
 
 CREATE TABLE IF NOT EXISTS torneos (
     Id INT AUTO_INCREMENT PRIMARY KEY,
