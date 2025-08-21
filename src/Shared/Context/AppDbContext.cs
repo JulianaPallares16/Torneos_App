@@ -9,6 +9,7 @@ using Torneos_App.src.Modules.Jugadores.Domain.Entities;
 using Torneos_App.src.Modules.CuerpoT.Domain.Entities;
 using Torneos_App.src.Modules.CuerpoM.Domain.Entities;
 using Torneos_App.src.Modules.Notificaciones.Domain.Entities;
+using Torneos_App.src.Modules.Transferencias.Domain.Entities;
 
 
 namespace Torneos_App.src.Shared.Context
@@ -22,6 +23,7 @@ namespace Torneos_App.src.Shared.Context
         public DbSet<Jugador> Jugadores => Set<Jugador>();
         public DbSet<CuerpoTecnico> CuerposTecnicos => Set<CuerpoTecnico>();
         public DbSet<CuerpoMedico> CuerposMedicos => Set<CuerpoMedico>();
+        public DbSet<Transferencia> Transferencias => Set<Transferencia>();
         public DbSet<Notificacion> Notificaciones => Set<Notificacion>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

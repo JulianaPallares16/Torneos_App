@@ -128,18 +128,13 @@ public class TransferenciasMenu
             switch (opn)
             {
                 case "1":
-                    service.EnviarNotificacion(
-                        jugadorSeleccionado.EquipoId.Value,
-                        $"{equipoComprador.Nombre} ha solicitado la COMPRA de {jugadorSeleccionado.Nombre}."
-                    );
+                    service.EnviarSolicitudCompra(jugadorSeleccionado.Id, equipoComprador.Id);
                     Console.WriteLine("✅ Solicitud de compra enviada al equipo dueño.");
+                    Console.ReadKey();
                     break;
 
                 case "2":
-                    service.EnviarNotificacion(
-                        jugadorSeleccionado.EquipoId.Value,
-                        $"{equipoComprador.Nombre} ha solicitado el PRESTAMO de {jugadorSeleccionado.Nombre}."
-                    );
+                    service.EnviarSolicitudPrestamo(jugadorSeleccionado.Id, equipoComprador.Id);
                     Console.WriteLine("✅ Solicitud de préstamo enviada al equipo dueño.");
                     break;
 

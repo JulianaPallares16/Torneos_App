@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Torneos_App.src.Modules.Notificaciones.Domain.Entities;
 
 namespace Torneos_App.src.Shared.Configuration
 {
-    public class NotificacionConfiguration
+    public class NotificacionConfiguration : IEntityTypeConfiguration<Notificacion>
     {
         public void Configure(EntityTypeBuilder<Notificacion> builder)
         {
@@ -18,11 +14,11 @@ namespace Torneos_App.src.Shared.Configuration
 
             builder.Property(n => n.Tipo)
                    .IsRequired()
-                   .HasMaxLength(20);
+                   .HasMaxLength(30);
 
             builder.Property(n => n.Mensaje)
                    .IsRequired()
-                   .HasMaxLength(300);
+                   .HasMaxLength(500);
 
             builder.Property(n => n.Fecha)
                    .IsRequired();
@@ -32,7 +28,7 @@ namespace Torneos_App.src.Shared.Configuration
 
             builder.Property(n => n.PrecioPropuesto)
                    .HasColumnType("decimal(12,2)")
-                   .IsRequired();
+                   .IsRequired(false);
 
             builder.Property(n => n.Estado)
                    .IsRequired()
@@ -52,6 +48,11 @@ namespace Torneos_App.src.Shared.Configuration
                    .WithMany()
                    .HasForeignKey(n => n.JugadorId)
                    .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(n => n.Transferencia)
+                   .WithMany(t => t.Notificaciones!)
+                   .HasForeignKey(n => n.TransferenciaId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

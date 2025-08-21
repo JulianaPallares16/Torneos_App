@@ -38,10 +38,12 @@ public class EquipoMenu
         torneorepo = new TorneoRepository(context);
         cuerpoMrepo = new CuerpoMedicoRepository(context);
         cuerpoTrepo = new CuerpoTRepository(context);
+        transferenciarepo = new TransferenciaRepository(context);
         service = new EquipoService(repo, torneorepo);
         torneoService = new TorneoService(torneorepo);
         cuerpoMService = new CuerpoMedicoService(cuerpoMrepo);
         cuerpoTService = new CuerpoTecnicoService(cuerpoTrepo);
+        transferenciaService = new TransferenciaService(transferenciarepo);
     }
     public async Task RenderMenu()
     {
@@ -165,13 +167,14 @@ public class EquipoMenu
                         Console.WriteLine("✅ Equipo inscrito al torneo con éxito.");
                         Console.ReadKey();
                         break;
-                    case"5":
+                    case "5":
                         Console.Clear();
                         Console.WriteLine("=== Notificaciones ===");
                         var equiposn = await service.ConsultarEquiposAsync();
                         Console.WriteLine("Equipos disponibles:");
                         foreach (var e in equiposn)
                             Console.WriteLine($"Id: {e.Id} - Nombre: {e.Nombre}");
+
                         Console.WriteLine("Ingrese el Id del equipo para ver sus notificaciones: ");
                         if (!int.TryParse(Console.ReadLine(), out int equipoIdN))
                         {
@@ -180,19 +183,118 @@ public class EquipoMenu
                             break;
                         }
                         var notificaciones = transferenciaService.ObtenerNotificaciones(equipoIdN);
-                        if (notificaciones.Any())
+
+                        if (!notificaciones.Any())
                         {
-                            Console.WriteLine("📢 Notificaciones:");
-                            foreach (var n in notificaciones)
+                            Console.WriteLine("No hay notificaciones pendientes.");
+                            Console.ReadKey();
+                            break;
+                        }
+
+                        Console.WriteLine("📢 Notificaciones pendientes:");
+                        foreach (var n in notificaciones)
+                        {
+                            Console.WriteLine($"Id: {n.Id} | {n.Tipo} | Jugador: {n.Jugador?.Nombre} | Dueño: {n.EquipoDueno?.Nombre} | Solicitante: {n.EquipoSolicitante?.Nombre}");
+                            Console.WriteLine($"   Fecha: {n.Fecha} | Estado: {n.Estado}");
+                            Console.WriteLine($"   Mensaje: {n.Mensaje}");
+                            if (n.PrecioPropuesto != null) Console.WriteLine($"   Precio propuesto: {n.PrecioPropuesto}");
+                            Console.WriteLine(new string('-', 60));
+                        }
+
+                        Console.Write("Ingrese el Id de la notificación a gestionar (o ENTER para regresar): ");
+                        var input = Console.ReadLine();
+                        if (string.IsNullOrWhiteSpace(input))
+                        {
+                            break;
+                        }
+                        if (!int.TryParse(input, out int notificacionIdSel))
+                        {
+                            Console.WriteLine("Id inválido.");
+                            Console.ReadKey();
+                            break;
+                        }
+
+                        var notifSel = notificaciones.FirstOrDefault(x => x.Id == notificacionIdSel);
+                        if (notifSel == null)
+                        {
+                            Console.WriteLine("Notificación no encontrada.");
+                            Console.ReadKey();
+                            break;
+                        }
+
+                        // Determinar quién debe responder y qué flujo:
+                        if (notifSel.Tipo == "SOLICITUD_COMPRA" && notifSel.EquipoDuenoId == equipoIdN)
+                        {
+                            // Responde DUEÑO: aceptar/rechazar y proponer precio
+                            Console.Write("¿Aceptar solicitud de COMPRA? (s/n): ");
+                            var r = Console.ReadLine();
+                            if (!string.IsNullOrWhiteSpace(r) && r.Trim().ToLower() == "s")
                             {
-                                Console.WriteLine($"[{n.Fecha}] {n.Tipo} - {n.Mensaje} | Estado: {n.Estado}");
+                                Console.Write("Ingrese precio propuesto: ");
+                                if (!decimal.TryParse(Console.ReadLine(), out decimal precio))
+                                {
+                                    Console.WriteLine("Precio inválido.");
+                                    Console.ReadKey();
+                                    break;
+                                }
+                                transferenciaService.ResponderSolicitudCompra(notificacionIdSel, equipoIdN, true, precio);
+                                Console.WriteLine("✅ Propuesta enviada al comprador.");
                             }
+                            else
+                            {
+                                transferenciaService.ResponderSolicitudCompra(notificacionIdSel, equipoIdN, false, null);
+                                Console.WriteLine("❌ Solicitud rechazada.");
+                            }
+                        }
+                        else if (notifSel.Tipo == "SOLICITUD_PRESTAMO" && notifSel.EquipoDuenoId == equipoIdN)
+                        {
+                            // Responde DUEÑO: aceptar/rechazar y proponer plazo
+                            Console.Write("¿Aceptar solicitud de PRÉSTAMO? (s/n): ");
+                            var r = Console.ReadLine();
+                            if (!string.IsNullOrWhiteSpace(r) && r.Trim().ToLower() == "s")
+                            {
+                                Console.Write("Ingrese plazo (meses): ");
+                                if (!int.TryParse(Console.ReadLine(), out int meses))
+                                {
+                                    Console.WriteLine("Meses inválidos.");
+                                    Console.ReadKey();
+                                    break;
+                                }
+                                transferenciaService.ResponderSolicitudPrestamo(notificacionIdSel, equipoIdN, true, meses);
+                                Console.WriteLine("✅ Propuesta de préstamo enviada al comprador.");
+                            }
+                            else
+                            {
+                                transferenciaService.ResponderSolicitudPrestamo(notificacionIdSel, equipoIdN, false, null);
+                                Console.WriteLine("❌ Solicitud de préstamo rechazada.");
+                            }
+                        }
+                        else if (notifSel.Tipo == "PROPUESTA_COMPRA" && notifSel.EquipoSolicitanteId == equipoIdN)
+                        {
+                            // Responde COMPRADOR a la propuesta del dueño (compra)
+                            Console.Write("El dueño propuso un precio. ¿Aceptar? (s/n): ");
+                            var r = Console.ReadLine();
+                            var aceptar = !string.IsNullOrWhiteSpace(r) && r.Trim().ToLower() == "s";
+                            transferenciaService.ConfirmarCompra(notificacionIdSel, equipoIdN, aceptar);
+                            Console.WriteLine(aceptar ? "✅ Compra confirmada." : "❌ Compra rechazada.");
+                        }
+                        else if (notifSel.Tipo == "PROPUESTA_PRESTAMO" && notifSel.EquipoSolicitanteId == equipoIdN)
+                        {
+                            // Responde COMPRADOR a la propuesta del dueño (préstamo)
+                            Console.Write("El dueño propuso un plazo. ¿Aceptar? (s/n): ");
+                            var r = Console.ReadLine();
+                            var aceptar = !string.IsNullOrWhiteSpace(r) && r.Trim().ToLower() == "s";
+                            transferenciaService.ConfirmarPrestamo(notificacionIdSel, equipoIdN, aceptar);
+                            Console.WriteLine(aceptar ? "✅ Préstamo confirmado." : "❌ Préstamo rechazado.");
                         }
                         else
                         {
-                            Console.WriteLine("No hay notificaciones.");
+                            Console.WriteLine("Esta notificación no corresponde a una acción para este equipo.");
                         }
+
+                        Console.ReadKey();
                         break;
+
                     case "6":
                         Console.Clear();
                         Console.WriteLine("=== Salir de Torneo ===");
