@@ -63,32 +63,33 @@ CREATE TABLE IF NOT EXISTS jugadores (
 
 CREATE TABLE Notificaciones (
     Id INT AUTO_INCREMENT PRIMARY KEY,
-    Mensaje NVARCHAR(500) NOT NULL,
-    Fecha DATETIME NOT NULL DEFAULT GETDATE(),
-    Estado NVARCHAR(50) NOT NULL,
+    Mensaje VARCHAR(500) NOT NULL,
+    Fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Estado VARCHAR(50) NOT NULL,
     EquipoDuenoId INT NOT NULL,
     EquipoSolicitanteId INT NOT NULL,
     JugadorId INT NOT NULL,
-    Atendida BIT NOT NULL DEFAULT 0,
+    Atendida TINYINT(1) NOT NULL DEFAULT 0,
     FOREIGN KEY (EquipoDuenoId) REFERENCES Equipos(Id),
     FOREIGN KEY (EquipoSolicitanteId) REFERENCES Equipos(Id),
     FOREIGN KEY (JugadorId) REFERENCES Jugadores(Id)
-);
+) ENGINE = INNODB;
+
+
 CREATE TABLE Transferencias (
     Id INT AUTO_INCREMENT PRIMARY KEY,
     JugadorId INT NOT NULL,
     EquipoOrigenId INT NOT NULL,
     EquipoDestinoId INT NOT NULL,
-    Tipo NVARCHAR(50) NOT NULL,  
-    Precio DECIMAL(18,2) NULL,   
-    TiempoPrestamoMeses INT NULL, 
-    Estado NVARCHAR(50) NOT NULL DEFAULT 'Pendiente',
-    FechaSolicitud DATETIME NOT NULL DEFAULT GETDATE(),
+    Tipo VARCHAR(50) NOT NULL,
+    Precio DECIMAL(18,2) NULL,
+    TiempoPrestamoMeses INT NULL,
+    Estado VARCHAR(50) NOT NULL DEFAULT 'Pendiente',
+    FechaSolicitud DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FechaRespuesta DATETIME NULL,
     FOREIGN KEY (JugadorId) REFERENCES Jugadores(Id),
     FOREIGN KEY (EquipoOrigenId) REFERENCES Equipos(Id),
     FOREIGN KEY (EquipoDestinoId) REFERENCES Equipos(Id)
-);
-
+) ENGINE = INNODB;
 
 ```
